@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 import sys
 
@@ -32,11 +32,13 @@ def create_todo():
         db.session.commit()
         body['description'] = item.description
     except:
-        db.session.rollback()
         error = True
+        db.session.rollback()
         print(sys.exc_info())
     finally:
         db.session.close()
-    if not error:
+    if error:
+        abort(400)
+    else:
         return jsonify(body)
     
