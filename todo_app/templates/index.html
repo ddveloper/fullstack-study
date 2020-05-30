@@ -23,21 +23,37 @@
                 cursor: pointer;
                 font-size: 20px;
             }
+            .lists-wrapper, .todos-wrapper {
+                display: inline-block;
+                vertical-align: top;
+            }
         </style>
     </head>
     <body>
-        <form id="form">
-            <input type="text" id="description" name="description">
-            <input type="submit" value="Create">
-        </form>
-        <div id="error" class="hidden">Something went wrong!</div>
-        <ul id="todos">
-            {% for d  in data %}
-            <li><input class="check-completed" data-id="{{ d.id }}" type="checkbox" {% if d.completed %} checked {% endif %}>{{ d.description }}
-            <button class="item-delete" data-id="{{ d.id }}">&cross;</button>
-            </li>
-            {% endfor %}
-        </ul>
+        <div class="lists-wrapper">
+            <ul id="lists">
+                {% for list in lists %}
+                <a href="/lists/{{ list.id }}">
+                <li>{{ list.name }}</li>
+                </a>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="todos-wrapper">
+            <h4>{{ active_list.name }}</h4>
+            <form id="form">
+                <input type="text" id="description" name="description">
+                <input type="submit" value="Create">
+            </form>
+            <div id="error" class="hidden">Something went wrong!</div>
+            <ul id="todos">
+                {% for todo in todos %}
+                <li><input class="check-completed" todo-id="{{ todo.id }}" type="checkbox" {% if todo.completed %} checked {% endif %}>{{ todo.description }}
+                <button class="item-delete" todo-id="{{ todo.id }}">&cross;</button>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
         <script>
             const deletebuttons = document.querySelectorAll('.item-delete');
             for (let i=0; i<deletebuttons.length; i++) {
@@ -101,7 +117,7 @@
                     const liItem = document.createElement('LI');
                     const checkbox = document.createElement('input');
                     checkbox.className = 'check-completed';
-                    checkbox.setAttribute('data-id', jsonResponse.id)
+                    checkbox.setAttribute('todo-id', jsonResponse.id)
                     checkbox.type = 'checkbox'
                     liItem.appendChild(checkbox);
                     
@@ -110,7 +126,7 @@
 
                     const deleteBtn = document.createElement('button');
                     deleteBtn.className = 'item-delete';
-                    deleteBtn.setAttribute('data-id', jsonResponse.id);
+                    deleteBtn.setAttribute('todo-id', jsonResponse.id);
                     deleteBtn.innerHTML = '&cross;';
                     liItem.appendChild(deleteBtn);
 
