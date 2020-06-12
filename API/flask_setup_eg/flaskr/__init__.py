@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from models import setup_db, Question
 from flask_cors import CORS
 
@@ -20,12 +20,16 @@ def create_app(test_config=None):
 
     @app.route('/questions')
     def get_questions():
+        page = request.args.get('page', 1, type=int)
+        start = (page-1) * 10
+        end = start + 10
         questions = Question.query.all()
         formatted_questions = [question.format() for question in questions]
 
         return jsonify({
             'success': True,
-            'questions': formatted_questions
+            'questions': formatted_questions[start:end],
+            'total_questions': len(questions)
         })
 
     return app
