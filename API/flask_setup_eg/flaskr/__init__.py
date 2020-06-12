@@ -1,5 +1,5 @@
 from flask import Flask, jsonify
-from models import setup_db
+from models import setup_db, Question
 from flask_cors import CORS
 
 def create_app(test_config=None):
@@ -13,10 +13,20 @@ def create_app(test_config=None):
         response.headers.add('Access-Control-Allow-Headers', 'GET, POST, PATCH, DELETE, OPTIONS')
         return response
 
-    @app.route('/')
-    # @cross_origin
-    def hello():
-        return jsonify({'message': 'Hello API'})
+    # @app.route('/')
+    # # @cross_origin
+    # def hello():
+    #     return jsonify({'message': 'Hello API'})
+
+    @app.route('/questions')
+    def get_questions():
+        questions = Question.query.all()
+        formatted_questions = [question.format() for question in questions]
+
+        return jsonify({
+            'success': True,
+            'questions': formatted_questions
+        })
 
     return app
 
